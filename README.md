@@ -22,7 +22,7 @@ The following sections contain steps A through D with instructions to create a d
 
 #### Step - A: Setup Repository and Deploy Pipeline
 1. Clone this repository to make changes and commit to your code repository
-1. Update the repository settings by editing `lib/pipeline-input-variables.ts` change the value of `PIPELINE_CODE_REPO` variable to point to your code repository name
+1. Update the repository settings by editing `lib/pipeline-input-variables.ts` change the value of `PIPELINE_CODE_REPO`, `PIPELINE_CODE_BRANCH`, and `pipelineConnectionArn` variable to point to your code repository name
 1. Add environment (account and region) by editing `bin/cf-cd-sample-app.ts` follow comments in the file to uncomment and edit the right environment entry
 1. Bootstrap CDK using command `cdk bootstrap` if not already done
 1. Update/customize the other variables per applicable naming standards
