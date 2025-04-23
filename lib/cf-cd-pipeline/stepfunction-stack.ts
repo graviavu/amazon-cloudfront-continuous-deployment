@@ -28,7 +28,10 @@ export class StepFunctionStack extends cdk.NestedStack {
 
     const logGroup = new cdk.aws_logs.LogGroup(
       this,
-      "CloudFrontPromotion-StepFunction-LogGroup"
+      "CloudFrontPromotion-StepFunction-LogGroup",
+      {
+        logGroupName: "/aws/vendedlogs/states/CloudFrontPromotion-StepFunction-LogGroup",
+      }
     );
 
     const stateMachineRole = new Role(this, "StepFunctionRole", {

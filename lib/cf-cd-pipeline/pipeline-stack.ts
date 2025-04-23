@@ -9,7 +9,6 @@ import {
   ManualApprovalStep,
   ShellStep,
 } from "aws-cdk-lib/pipelines";
-import { Repository } from "aws-cdk-lib/aws-codecommit";
 import { CfnBucket } from "aws-cdk-lib/aws-s3";
 import { CfnKey } from "aws-cdk-lib/aws-kms";
 import { AwsSolutionsChecks, NagSuppressions } from "cdk-nag";
@@ -22,16 +21,19 @@ import { StepFunctionStack } from "./stepfunction-stack";
 import {
   PipelineExportNames,
   PipelineInputVariables,
+  pipelineConnectionArn,
 } from "../pipeline-input-variables";
+import { PipelineType } from "aws-cdk-lib/aws-codepipeline";
 
 export class PipelineStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
     const pipeline = new CodePipeline(this, "Pipeline", {
       pipelineName: PipelineInputVariables.PIPELINE_NAME,
+      pipelineType: PipelineType.V2,
       synth: new ShellStep("Synth", {
-        input: this.getCodePipelineSource(),
+        input: this.getCodePipelineSource(props.env),
         commands: ["npm ci", "npm run build", "npx cdk synth"],
       }),
       crossAccountKeys: true,
@@ -92,16 +94,15 @@ export class PipelineStack extends cdk.Stack {
     );
   }
 
-  private getCodePipelineSource(): cdk.pipelines.IFileSetProducer | undefined {
-    // using CodeCommit repository, but can easily switched to github or S3
+  private getCodePipelineSource(env: cdk.Environment|undefined): cdk.pipelines.IFileSetProducer | undefined {
+    // using github repository, but can easily switched to S3 or other repositories
     // Please refer to CodePipelineSource documentation for using different repository
-    return CodePipelineSource.codeCommit(
-      Repository.fromRepositoryName(
-        this,
-        "CD-Pipeline-Repository",
-        PipelineInputVariables.PIPELINE_CODE_REPO
-      ),
-      PipelineInputVariables.PIPELINE_CODE_BRANCH
+    return CodePipelineSource.connection(
+      PipelineInputVariables.PIPELINE_CODE_REPO,
+      PipelineInputVariables.PIPELINE_CODE_BRANCH, 
+      {
+        connectionArn: pipelineConnectionArn(env? env.account || '' : ''),
+      }
     );
   }
 

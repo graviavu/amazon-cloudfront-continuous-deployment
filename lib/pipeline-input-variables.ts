@@ -4,8 +4,9 @@
 
 export const PipelineInputVariables = {
   // Pipeline variables
-  PIPELINE_CODE_REPO: "cf-cd-repository",
+  PIPELINE_CODE_REPO: "graviavu/amazon-cloudfront-continuous-deployment",
   PIPELINE_CODE_BRANCH: "main",
+  
 
   PIPELINE_NAME: "cloudfront-cd-pipeline",
   // prefix
@@ -17,6 +18,10 @@ export const PipelineInputVariables = {
   // site access logs bucket name
   LOG_BUCKET_NAME: "mysite-logs",
 };
+
+export const pipelineConnectionArn: (account: string) => string = (
+  account: string
+) => `arn:aws:codeconnections:us-east-1:${account}:connection/4ffd1ec2-cef5-4c7b-91b2-d7d68c45258d`;
 
 export const PipelineExportNames = {
   STEP_FUNCTION_ROLE_ARN: `${PipelineInputVariables.PIPELINE_NAME}-cd-pipeline-stepfunction-roleArn`,
